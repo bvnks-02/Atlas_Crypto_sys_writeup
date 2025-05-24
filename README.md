@@ -81,7 +81,7 @@ for shared_key in candidates:
     m = c // shared_key
     try:
         msg = long_to_bytes(m)
-        if b'CTF' in msg or b'{' in msg:
+        if b'El-Djazair CTF{' in msg or b'{' in msg:
             print(f"[*] Found: {msg.decode()}")
             break
     except:
