@@ -1,13 +1,14 @@
-Atlas_Crypto_sys_writeup
+# Atlas\_Crypto\_sys\_writeup
 
-In this repo you will find the writeup for the challenge Atlas Cryptosystem from CTF El Djazair.
+In this repo you will find the writeup for the challenge **Atlas Cryptosystem** from **CTF El Djazair**.
 
-Challenge Description
+## 🔐 **Challenge Description**
 
-Atlas Crypto system is a key exchanege system developed by algerien cryto scientist can u crack it ?
+> *Atlas Crypto system is a key exchanege system developed by algerien cryto scientist can u crack it ?*
 
-Challenge Script
+## 🧾 **Challenge Script**
 
+```python
 import random
 from Crypto.Util.number import getPrime as get_prime
 
@@ -32,9 +33,11 @@ class AtlasCryptosystem:
 
     def decrypt(self, c):
         return c // self.shared_key
+```
 
-Data
+## 📊 **Data**
 
+```python
 p = 0xf9d4a2e8b0c7f3e1a5937d6b2c5a8f1e3d7b4a6c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5
 
 y_A = 0x8a3d7b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5
@@ -42,23 +45,25 @@ y_A = 0x8a3d7b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e
 y_B = 0x3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5
 
 c = 0x1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5
+```
 
-Solution
+## 🧠 **Solution**
 
-As u can see, to solve this traditionally by reversing the process won't work because there's not enough data to do that. We have 3 unknown variables: the private key, the shared secret, and the message. In a modular system, it's likely impossible to figure out a solution with this data alone.
+As u can see, to solve this traditionally by reversing the process won't work because there's not enough data to do that. We have 3 unknown variables: the **private key**, the **shared secret**, and the **message**. In a modular system, it's likely impossible to figure out a solution with this data alone.
 
-To solve this, we need to think more simply.
+👉 **To solve this, we need to think more simply.**
 
-As u notice, the ciphertext is generated like: C = m * shared_key (without modular transformation), which will help us reverse this operation without a problem if we had one of them.
+As u notice, the ciphertext is generated like: `C = m * shared_key` (**without modular transformation**), which will help us reverse this operation without a problem **if we had one of them**.
 
-The solution is to factorize the ciphertext to prime factors and then retrieve all possible factors of it, which is computationally possible and even easy because C isn't like RSA modulus (two-prime composite) and cannot be controlled through the process to make it hard to factor.
+🎯 **The solution is to factorize the ciphertext to prime factors and then retrieve all possible factors of it**, which is computationally possible and even easy because `C` isn't like RSA modulus (two-prime composite) and **cannot be controlled through the process to make it hard to factor**.
 
-After we get all the factors, we try with each one of them if it is the message using the long_to_bytes() function.
+After we get all the factors, we try with each one of them if it is the message using the `long_to_bytes()` function.
 
 This approach will give us the message since multiplying by the shared key is just a scaling operation.
 
-Sample Script
+### 🧪 **Sample Script**
 
+```python
 from Crypto.Util.number import long_to_bytes
 from sympy.ntheory import factorint
 
@@ -81,7 +86,12 @@ for shared_key in candidates:
             break
     except:
         continue
+```
 
-🧠 The key idea: simple multiplication without mod means we can brute-force the shared key through factor trials.
+---
 
-🔎 Just check each factor of C, divide C by that factor, and see if it converts cleanly into a readable message.
+🎯 **The key idea**: simple multiplication without `mod` means we can brute-force the shared key through factor trials.
+
+🔎 **Just check each factor of `C`**, divide `C` by that factor, and see if it converts cleanly into a readable message.
+
+---
